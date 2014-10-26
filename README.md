@@ -7,15 +7,20 @@ The untidy data was downloaded from [this website](http://archive.ics.uci.edu/ml
 
 Details about the Script "run_analysis.R"
 --------------------------
+
+#### Do I have to worry about where the script is in relation to the datasets?
 The script prompts you to provide the directory that is downloaded from the website above, and temporarily enters that directory to do its work. Thus, there is no concern about where the script is in relation to where the data is.
 
+#### How does the script process the test and training datasets?
 The script has an internal function (*makeDataTable*) that can process either the "test" or the "train" sub-directory. Within each sub-directory, there are three files: "subjects_*.txt", "y_*.txt" (which details the activities), and "X_*.txt" (which details the measurements for each feature). The three files have the same number of rows, indicating that each row has a (subject, activity) pair and the associated measurements for that pair. The function follows this logic to combine the test and training datasets.
 
+#### How does the script select just the mean and standard deviation features
 Then the script uses the built-in grep function to select only the features related to mean() and std(). To distinguish mean() from meanFreq(), I took advantage of the fact that R converted the parentheses to periods, and used the regular expression "mean[.]". The brackets were necessary because otherwise "." would be interpreted as "any 1 character", which would also include meanFreq() features. This step created the first tidy dataset.
 
+#### How does the script generate the second tidy dataset?
 The final step to create the second dataset uses aggregate. The function creates a table that where each row has one (subject, activity) pair, and the averages of each of the relevant features (see the code book below). Example of what this looks like:
 
-### Table 1: example (fake) output for second tidy dataset
+**Table 1: example (fake) output for second tidy dataset**
 
 <table>
 	<tr>
@@ -35,11 +40,13 @@ The final step to create the second dataset uses aggregate. The function creates
 ### Why is the second dataset tidy?
 
 The three principles established in Hadley Wickham's article ["Tidy Data"](http://vita.had.co.nz/papers/tidy-data.pdf) for a tidy dataset are
+
 1. Each variable is a column.
 2. Each observation is a row.
 3. Each type of observational unit is a table.
 
 **The reason this is a tidy dataset is because it fulfills these criteria:**
+
 1. Each variable (subject, activity, feature 1, feature 2, … etc) is a column
 2. Each observation (what is the average of each feature for each [subject, activity] pair) is a row
 3. This table is one type of observational unit: average of features from the Human Activity Recognition dataset for each subject doing each activity
@@ -70,6 +77,7 @@ Code Book
 ----------------
 
 Note: '.XYZ' is used to denote 3-axial signals in the X, Y and Z directions.
+
 + Subject: each of the 30 subjects was given a unique identifier 1-30
 + Activity: the activity performed (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING)
 + tBodyAcc.mean.XYZ: average *linear* acceleration of the body in the X, Y and Z directions
@@ -93,6 +101,9 @@ Note: '.XYZ' is used to denote 3-axial signals in the X, Y and Z directions.
 Final Note: How do I read in the tidy dataset?
 ----------------------------------------------
 The data was written out using this line of code:
->write.table(tidy.dataset2,file="UCI_HAR_tidyDataset2.txt", row.names=F, sep="\t", quote=F)
+
+    write.table(tidy.dataset2,file="UCI_HAR_tidyDataset2.txt", row.names=F, sep="\t", quote=F)
+
 Thus, if you want to read the data into R, you should use this line of code:
->read.table(file="UCI_HAR_tidyDataset2.txt", header=TRUE, sep="\t")
+
+    read.table(file="UCI_HAR_tidyDataset2.txt", header=TRUE, sep="\t")
